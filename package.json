@@ -1,0 +1,39 @@
+{
+  "name": "aws-nodejs-typescript",
+  "version": "1.0.0",
+  "description": "Serverless webpack example using Typescript",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "local": "bash localrun.sh"
+  },
+  "dependencies": {
+    "@types/uuid": "^3.4.4",
+    "amazon-cognito-identity-js-with-node-fetch": "^3.0.14",
+    "aws-sdk": "^2.502.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.1",
+    "mysql2": "1.5.2",
+    "pg-hstore": "^2.3.2",
+    "reflect-metadata": "^0.1.13",
+    "request": "^2.88.0",
+    "sequelize": "^4.44.0",
+    "sequelize-typescript": "^0.6.11",
+    "serverless-offline": "^5.8.0",
+    "serverless-plugin-canary-deployments": "^0.4.8",
+    "serverless-plugin-split-stacks": "^1.9.0",
+    "sinon": "^7.3.0",
+    "source-map-support": "^0.5.10",
+    "tedious": "^6.1.1"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.17",
+    "@types/node": "^10.12.18",
+    "serverless-webpack": "^5.2.0",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.2.4",
+    "webpack": "^4.29.0"
+  },
+  "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
+  "license": "MIT"
+}

@@ -1,0 +1,61 @@
+Resources:
+  ApiGatewayAuthorizer:
+    Type: 'AWS::ApiGateway::Authorizer'
+    Properties:
+      IdentitySource: method.request.header.Authorization
+      # IdentityValidationExpression: '.*'
+      Name: ApiGatewayAuthorizerRightstart
+      Type: COGNITO_USER_POOLS
+      RestApiId: 
+        Ref: ApiGatewayRestApi
+      ProviderARNs:
+      #   - 'arn:aws:cognito-idp:us-east-1:448566295586:userpool/us-east-1_ziscZRBJW' # create this cognito resource in stack later.
+        - !GetAtt CognitoUserPool.Arn
+
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: 'serverless-rightstart-userpool'
+      Schema:
+        - AttributeDataType: String
+          Name: email
+          Mutable: false
+          Required: true
+        - AttributeDataType: Number
+          Name: phone
+          Mutable: true
+          Required: false
+        - AttributeDataType: String
+          Name: name
+          Mutable: true
+          Required: false
+      AutoVerifiedAttributes:
+        - email
+      LambdaConfig:
+        PreSignUp: ${self:custom.confirmLambdaName}  # could not directly refer to lambda function, since it is in functions. This is a workaround
+
+  LambdaInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: ${self:custom.confirmLambdaName}
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt CognitoUserPool.Arn
+
+
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: 'serverless-rightstart-userpool-client'
+      GenerateSecret: false
+      UserPoolId: 
+        Ref: CognitoUserPool
+
+Outputs:
+  CognitoUserPoolId:
+    Value:
+      Ref: CognitoUserPool
+  CognitoUserPoolClientId:
+    Value:
+      Ref: CognitoUserPoolClient
