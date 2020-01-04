@@ -6,17 +6,12 @@ Resources:
       CidrBlock: ${self:custom.values.VPC_CIDR_BLOCK}
       EnableDnsHostnames: true
       EnableDnsSupport: true
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 03d99de1-acc8-47c2-b2bf-93697b68b421
+
   PublicSubnetRightstart:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref RightstartVPC
       CidrBlock: !Select [ 0, '${self:custom.values.CIDR_BLOCKS}']
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 61858f8b-9014-4c96-81f2-fd825308433b
     DependsOn:
       - Nacl
   PrivateSubnetRightstart:
@@ -27,9 +22,6 @@ Resources:
       AvailabilityZone: !Select 
         - 1
         - Fn::GetAZs: !Ref 'AWS::Region'
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 00abc2a5-3426-4bce-a6b2-5add885b5f18
     DependsOn:
       - Nacl
   IGWRightstart:
@@ -38,16 +30,11 @@ Resources:
       Tags:
         - Key: Owner
           Value: Arvind
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 1118be34-ef8a-44a8-b6da-5cb05a9b84eb
+
   RouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
       VpcId: !Ref RightstartVPC
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: dfc2652d-b18b-4b80-bf55-daf4dfa9cc17
     DependsOn:
       - IGWRightstart
   Route1:
@@ -56,17 +43,13 @@ Resources:
       RouteTableId: !Ref RouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref IGWRightstart
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 136f9cea-c322-47b3-b701-970988eea4ce
+
   EC2VPCG1ZPCD:
     Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
       VpcId: !Ref RightstartVPC
       InternetGatewayId: !Ref IGWRightstart
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: d9e7942c-c404-40a0-9d0e-7248cd92147b
+
   RightstartDb:
     Type: 'AWS::RDS::DBInstance'
     Properties:
@@ -80,9 +63,7 @@ Resources:
       MasterUsername: '${self:custom.values.DATABASE_USER}'
       DBInstanceClass: db.t2.small
       AllocatedStorage: 100
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 39428338-5775-4857-aa44-feafa278e6cb
+
   DbSubnet:
     Type: 'AWS::RDS::DBSubnetGroup'
     Properties:
@@ -90,17 +71,13 @@ Resources:
         - !Ref PrivateSubnetRightstart
         - !Ref PrivateSubnet2
       DBSubnetGroupDescription: subnet
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: dd55e9cd-d5b8-4a70-8621-7c611070bb1b
+
   DbSG:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref RightstartVPC
       GroupDescription: Db Sg
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 521aa797-d878-49f9-ae09-352f547b4cc9
+
   LambdaSG:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -116,9 +93,6 @@ Resources:
           FromPort: 0
           ToPort: 65535
           CidrIp: 0.0.0.0/0
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: cb60b0b4-fcc7-497c-b975-270f6d4a6f17
     DependsOn:
       - RouteTable
   EC2SGIU7AS:
@@ -127,33 +101,25 @@ Resources:
       GroupId: !Ref DbSG
       SourceSecurityGroupId: !Ref LambdaSG
       IpProtocol: -1
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 8f0fb279-49f8-4c28-8e1f-024cf3118619
+
   Nacl:
     Type: 'AWS::EC2::NetworkAcl'
     Properties:
       VpcId: !Ref RightstartVPC
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: c8807c10-e008-4f4e-9a51-4ee924e5e675
+
   EC2SGE27ENP:
     Type: 'AWS::EC2::SecurityGroupEgress'
     Properties:
       GroupId: !Ref LambdaSG
       DestinationSecurityGroupId: !Ref DbSG
       IpProtocol: -1
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 50e3f090-8eff-4b4f-8efc-ed51660fc63a
+
   EC2SNAA40CZF:
     Type: 'AWS::EC2::SubnetNetworkAclAssociation'
     Properties:
       NetworkAclId: !Ref PrivateSubnetNacl
       SubnetId: !Ref PrivateSubnetRightstart
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 9a537e47-e293-4fa3-98a4-387168697ad1
+
   PrivateIngressEntry:
     Type: 'AWS::EC2::NetworkAclEntry'
     Properties:
@@ -162,16 +128,12 @@ Resources:
       RuleAction: allow
       Protocol: -1
       CidrBlock: !Select [ 0, '${self:custom.values.CIDR_BLOCKS}']
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: c14fb9c9-9980-4f67-b5a5-e5e0a7a4e2e1
+
   PrivateSubnetNacl:
     Type: 'AWS::EC2::NetworkAcl'
     Properties:
       VpcId: !Ref RightstartVPC
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 93145b4b-0bcf-4287-8513-63436ae6b0d5
+
   PrivateEgress:
     Type: 'AWS::EC2::NetworkAclEntry'
     Properties:
@@ -181,9 +143,7 @@ Resources:
       Protocol: -1
       CidrBlock: !Select [ 0, '${self:custom.values.CIDR_BLOCKS}']
       Egress: true
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 92f3a5e0-9660-4707-be87-d0d734381c09
+
   IngressEntry:
     Type: 'AWS::EC2::NetworkAclEntry'
     Properties:
@@ -192,9 +152,7 @@ Resources:
       RuleAction: allow
       Protocol: -1
       CidrBlock: 0.0.0.0/0
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: c920cff7-a407-4911-b126-5463c054bcfc
+
   Egress:
     Type: 'AWS::EC2::NetworkAclEntry'
     Properties:
@@ -204,18 +162,14 @@ Resources:
       Protocol: -1
       CidrBlock: 0.0.0.0/0
       Egress: true
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 196725e4-5559-4062-a0ae-f1e2aba37e44
+
   EC2SGI1JDWB:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
       GroupId: !Ref DbSG
       SourceSecurityGroupId: !Ref LambdaSG
       IpProtocol: -1
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 6d1ea7f9-110b-4d08-8c3c-ba9b22b0c13f
+
   PrivateSubnet2:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -224,17 +178,13 @@ Resources:
       AvailabilityZone: !Select 
         - 0
         - Fn::GetAZs: !Ref 'AWS::Region'
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: e28b0064-2104-4622-831d-d2bf7f776470
+
   EC2SNAA1NLI8:
     Type: 'AWS::EC2::SubnetNetworkAclAssociation'
     Properties:
       NetworkAclId: !Ref PrivateSubnetNacl
       SubnetId: !Ref PrivateSubnet2
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 118048e2-1490-4f5c-acd5-7da6e322c327
+
   # Instance:
   #   Type: 'AWS::EC2::Instance'
   #   Properties:
@@ -247,9 +197,6 @@ Resources:
   #     InstanceType: t2.small
   #     ImageId: ami-035b3c7efe6d061d5
   #     KeyName: Custom-Instance-testing
-  #   Metadata:
-  #     'AWS::CloudFormation::Designer':
-  #       id: a5e8b236-1308-4dac-8095-6201d5b981f2
   #   DependsOn:
   #     - IGWRightstart
   EC2SRTA3OGGH:
@@ -257,9 +204,7 @@ Resources:
     Properties:
       RouteTableId: !Ref RouteTable
       SubnetId: !Ref PublicSubnetRightstart
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 4ad8c1a2-f119-4d08-915f-21d523856511
+
   NatGateway:
     Type: 'AWS::EC2::NatGateway'
     Properties:
@@ -268,48 +213,36 @@ Resources:
         'Fn::GetAtt':
           - EIP
           - AllocationId
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: fd098e7c-e420-4b74-9788-30ffc2042396
+
   EIP:
     Type: 'AWS::EC2::EIP'
     Properties:
       Domain: vpc
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 766a151b-2b55-4ccb-b68a-97e2b3b432e0
+
   NatRoute:
     Type: 'AWS::EC2::Route'
     Properties:
       NatGatewayId: !Ref NatGateway
       DestinationCidrBlock: 0.0.0.0/0
       RouteTableId: !Ref PrivateRouteTable2
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: cb9b7aa5-f318-4d9c-a223-a2925d098018
+
   PrivateRouteTable2:
     Type: 'AWS::EC2::RouteTable'
     Properties:
       VpcId: !Ref RightstartVPC
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: abdf6ab7-e565-41db-9815-46630f067176
+
   LambdaPrivateSubnet:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref RightstartVPC
       CidrBlock: !Select [ 3, '${self:custom.values.CIDR_BLOCKS}']
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 68321710-81ea-437f-b16a-943cbea683d8
+
   EC2SRTA4P5JM:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref LambdaPrivateSubnet
       RouteTableId: !Ref PrivateRouteTable2
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 59342b35-f1c6-4c6e-b3c5-b889fc6f3dd2
+
   PrivateEgress2:
     Type: 'AWS::EC2::NetworkAclEntry'
     Properties:
@@ -319,9 +252,7 @@ Resources:
       Protocol: -1
       CidrBlock: !Select [ 3, '${self:custom.values.CIDR_BLOCKS}']
       Egress: true
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 51268fa9-5f80-4fb9-9f69-78e3bafe930d
+
   PrivateIngress2:
     Type: 'AWS::EC2::NetworkAclEntry'
     Properties:
@@ -330,9 +261,7 @@ Resources:
       RuleAction: allow
       Protocol: -1
       CidrBlock: !Select [ 3, '${self:custom.values.CIDR_BLOCKS}']
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: dfbd3fe7-5d83-43c6-bc72-e3806e976067
+
   CodeBuild:
     Type: 'AWS::CodeBuild::Project'
     Properties:
@@ -363,9 +292,7 @@ Resources:
         Subnets:
           - !Ref LambdaPrivateSubnet
         VpcId: !Ref RightstartVPC
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: d1a37e0c-1e38-478e-8959-f19c278499e5
+
   CodeBuildRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -388,9 +315,7 @@ Resources:
                   - '*'
                 Effect: Allow
                 Resource: '*'
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 763ea6d1-0a7b-41db-8138-c528fcf08849
+
   CodePipeline:
     Type: 'AWS::CodePipeline::Pipeline'
     Properties:
@@ -428,15 +353,11 @@ Resources:
                 - Name: BuildArtifact
               Configuration:
                 ProjectName: !Ref CodeBuild
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 74329802-0d9b-406b-8571-6d1e515156be
+
   s3codepipeline:
     Type: 'AWS::S3::Bucket'
     Properties: {}
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 88c6c979-dbd0-4615-a29a-ab0065939035
+
   CodePipelineRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -459,6 +380,4 @@ Resources:
                   - '*'
                 Effect: Allow
                 Resource: '*'
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: b882c225-c0fb-4fd4-ab06-a354c5673dc0
+
