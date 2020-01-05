@@ -6,18 +6,6 @@ import {BusinessException} from '../Exceptions/BussinessException';
 import {SystemException} from '../Exceptions/SystemException';
 
 class WishListApi {
-  static getAll(event, context) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const result = await WishListApi.sampleMethod();
-        console.log(result);
-        resolve(result);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
-
   static updateData(event, context) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -33,7 +21,7 @@ class WishListApi {
       } catch (error) {
         reject(error);
       }
-    })
+    });
   }
 
   @Api
@@ -55,7 +43,7 @@ class WishListApi {
       } catch (error) {
         reject(error);
       }
-    })
+    });
   }
 
   @Api
@@ -81,21 +69,10 @@ class WishListApi {
       } catch (error) {
         reject(error);
       }
-    })
-  }
-
-
-
-  static sampleMethod(): Promise<any> {
-    let user: User;
-    user = {name: 'Arvind', email: 'arvind.muthuraman@coda.global', id: 1024};
-
-    return Promise.resolve(user);
-    // return
+    });
   }
 }
 
-export const getAllWishList = WishListApi.getAll;
 export const updateData = WishListApi.updateData;
 export const insertData = WishListApi.insertData;
 export const getUserInfo = WishListApi.getUserInfo;

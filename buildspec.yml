@@ -28,7 +28,7 @@ phases:
        - npm install -g serverless
        - npm install
        - npm install sequelize-cli -g
-       - sequelize db:migrate --config ./config/config.js --env test
+       - sequelize db:migrate --config ./config/config.js --env cloud-dev
        - serverless deploy
       # - command
   #post_build:

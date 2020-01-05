@@ -110,19 +110,6 @@ functions:
           method: get
           path: api/{userId}
           integration: lambda
-          
-  # wishlist:
-  #   handler: Api/WishListApi.getAllWishList
-  #   events:
-  #     - http:
-  #         method: get
-  #         path: api/wishlist
-  #         integration: lambda
-  #         authorizer: 
-  #           type: COGNITO_USER_POOLS
-  #           authorizerId:
-  #             Ref: ApiGatewayAuthorizer
-
 
   confirmUser:
     handler: Api/MemberApi.confirmUser
